@@ -3,9 +3,15 @@ class TadpolesController < ApplicationController
 
   # add metamorphosize action here
   def metamorphosize
-    @tadpole = Tadpole.find_by(id: params[:id])
-    @frog = @tadpole.metamorphosize
-    redirect_to frog_path(@frog)
+    @frog = Frog.new(name: @tadpole.name, color: @tadpole.color, pond_id: @tadpole.pond.id)
+    respond_to do |format|
+      if @frog.save
+        @tadpole.destroy
+        format.html { redirect_to frog_path(@frog), notice: 'Tadpole was successfully metamorphosized.' }
+      else
+        format.html { redirect_to tadpole_path(@tadpole)}
+      end
+    end
   end
 
   def index
